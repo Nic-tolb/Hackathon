@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexusAcad — Plataforma Estudiantil</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- ══ SCREEN 1: AUTH ══ -->
+<div class="screen active" id="screen-auth">
+  <div class="auth-wrap">
+    <div class="auth-logo">
+      <div class="auth-logo-icon">N</div>
+      <div class="auth-logo-text">Nexus<em>Acad</em></div>
+      <div class="auth-logo-sub">Plataforma Inteligente de Aprendizaje · Campuslands</div>
+    </div>
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button class="auth-tab active" onclick="switchTab('register',this)">Crear cuenta</button>
+        <button class="auth-tab" onclick="switchTab('login',this)">Ya tengo cuenta</button>
+      </div>
+
+      <!-- REGISTRO -->
+      <div class="auth-panel active" id="panel-register">
+        <div class="auth-msg" id="reg-msg"></div>
+        <div class="field" id="f-rname">
+          <label>Nombre completo</label>
+          <input type="text" id="rname" placeholder="TU NOMBRE COMPLETO" oninput="this.value=this.value.toUpperCase()">
+          <div class="field-err">El nombre es obligatorio</div>
+        </div>
+
+        <div class="field" id="f-remail">
+          <label>Correo Gmail</label>
+          <input type="email" id="remail" placeholder="tunombre@gmail.com" oninput="checkEmail(this)">
+          <div class="field-err">Debe ser una cuenta @gmail.com válida</div>
+        </div>
+        <div class="field" id="f-rpwd">
+          <label>Contraseña</label>
+          <div class="pwd-wrap">
+            <input type="password" id="rpwd" placeholder="Mínimo 8 caracteres" oninput="pwdStrength(this.value)" maxlength="20">
+            <button class="pwd-toggle" onclick="togglePwd('rpwd',this)" type="button">👁</button>
+          </div>
+          <div class="pwd-bars"><div class="pwd-bar" id="pb1"></div><div class="pwd-bar" id="pb2"></div><div class="pwd-bar" id="pb3"></div><div class="pwd-bar" id="pb4"></div></div>
+          <div class="pwd-lbl" id="plbl">Mín. 8 caracteres · Máx. 20 · Al menos 1 mayúscula</div>
+          <div class="field-err">8–20 caracteres y al menos 1 letra mayúscula</div>
+        </div>
+        <div class="field" id="f-rcpwd">
+          <label>Confirmar contraseña</label>
+          <div class="pwd-wrap">
+            <input type="password" id="rcpwd" placeholder="Repite tu contraseña" maxlength="20">
+            <button class="pwd-toggle" onclick="togglePwd('rcpwd',this)" type="button">👁</button>
+          </div>
+          <div class="field-err">Las contraseñas no coinciden</div>
+        </div>
+        <button class="btn-auth" onclick="doRegister()">Crear mi cuenta →</button>
+      </div>
+
+      <!-- LOGIN -->
+      <div class="auth-panel" id="panel-login">
+        <div class="auth-msg" id="login-msg"></div>
+        <div class="field" id="f-lemail">
+          <label>Correo Gmail</label>
+          <input type="email" id="lemail" placeholder="tunombre@gmail.com">
+          <div class="field-err">Ingresa tu correo @gmail.com</div>
+        </div>
+        <div class="field" id="f-lpwd">
+          <label>Contraseña</label>
+          <div class="pwd-wrap">
+            <input type="password" id="lpwd" placeholder="Tu contraseña" onkeydown="if(event.key==='Enter')doLogin()" maxlength="20">
+            <button class="pwd-toggle" onclick="togglePwd('lpwd',this)" type="button">👁</button>
+          </div>
+          <div class="field-err">Correo o contraseña incorrectos</div>
+        </div>
+        <button class="btn-auth" onclick="doLogin()">Iniciar sesión →</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCREEN 2: WELCOME ══ -->
+<div class="screen" id="screen-welcome">
+  <div class="wcard">
+    <div class="wcard-av" id="wc-av">?</div>
+    <div class="wcard-name" id="wc-name">—</div>
+    <div class="wcard-email" id="wc-email">—</div>
+    <div class="winfo">
+      <div class="wrow"><span class="wrow-lbl">📧 Correo registrado</span><span class="wrow-val" id="wi-email">—</span></div>
+      <div class="wrow"><span class="wrow-lbl">👤 Nombre</span><span class="wrow-val" id="wi-name">—</span></div>
+      <div class="wrow"><span class="wrow-lbl">🔒 Contraseña</span><span class="wrow-val" style="letter-spacing:.2em;color:var(--text3)">••••••••</span></div>
+      <div class="wrow"><span class="wrow-lbl">📅 Fecha de registro</span><span class="wrow-val" id="wi-date">—</span></div>
+      <div class="wrow"><span class="wrow-lbl">🎭 Rol</span><span class="wrow-val" id="wi-role" style="color:var(--teal)">—</span></div>
+      <div class="wrow" id="wi-prog-row"><span class="wrow-lbl">🎓 Programa</span><span class="wrow-val" style="color:var(--teal)">Fullstack Developer</span></div>
+      <div class="wrow"><span class="wrow-lbl">🆔 ID</span><span class="wrow-val" id="wi-id">—</span></div>
+    </div>
+    <button class="btn-enter" onclick="enterApp()">Entrar a la plataforma →</button>
+    <button class="btn-logout" onclick="doLogout()">Cerrar sesión</button>
+  </div>
+</div>
+
+<!-- ══ SCREEN 3: APP ══ -->
+<div class="screen" id="screen-app">
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">N</div>
+      <div class="logo-text">Nexus<em>Acad</em></div>
+    </div>
+    <nav class="nav">
+      <div class="nav-sec">Principal</div>
+      <div class="nav-item active" onclick="goTo('dashboard',this)"><span class="ni">🏠</span>Dashboard</div>
+      <div class="nav-item" onclick="goTo('perfil',this)"><span class="ni">👤</span>Mi Perfil</div>
+      <div class="nav-item" onclick="goTo('ruta',this)"><span class="ni">🗺️</span>Mi Ruta</div>
+      <div class="nav-item" onclick="goTo('nexo',this)"><span class="ni">🤖</span>Asistente NEXO</div>
+      <div class="nav-sec">Seguimiento</div>
+      <div class="nav-item" onclick="goTo('riesgo',this)"><span class="ni">📊</span>Análisis de Riesgo</div>
+      <div class="nav-item" onclick="goTo('alertas',this)"><span class="ni">🔔</span>Alertas<span class="nbadge">2</span></div>
+      <div class="nav-item" onclick="goTo('logros',this)"><span class="ni">🏆</span>Logros</div>
+    </nav>
+    <div class="side-profile">
+      <div class="side-card">
+        <div class="av" id="side-av">?</div>
+        <div>
+          <div style="font-size:13px;font-weight:700" id="side-name">—</div>
+          <div style="font-size:11px;color:var(--text3)">Fullstack · Semana 1</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title" id="page-title">Dashboard</div>
+        <div style="font-size:12px;color:var(--text3)" id="page-sub">Bienvenido a NexusAcad · Campuslands</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-ghost" onclick="goTo('nexo',null)">💬 Hablar con NEXO</button>
+        <div class="notif-btn" onclick="goTo('alertas',null)">🔔<div class="notif-dot"></div></div>
+        <button class="btn btn-ghost" onclick="doLogout()" style="color:var(--coral)">⏻</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div style="margin-bottom:18px">
+          <div style="font-size:20px;font-weight:800;margin-bottom:4px">Hola, <span id="dash-name" style="color:var(--purple-l)">—</span> 👋</div>
+          <div class="t3 f13">Estás a punto de comenzar tu camino en Campuslands. ¡Todo está listo para ti!</div>
+        </div>
+        <div class="g4 mb14">
+          <div class="kpi"><div class="kpi-val" style="color:var(--purple-l)">0</div><div class="kpi-lbl">Índice Académico</div><div class="kpi-tr">— Sin datos aún</div></div>
+          <div class="kpi"><div class="kpi-val" style="color:var(--teal)">0%</div><div class="kpi-lbl">Asistencia</div><div class="kpi-tr">— Clases por comenzar</div></div>
+          <div class="kpi"><div class="kpi-val" style="color:var(--amber)">—</div><div class="kpi-lbl">Promedio módulo</div><div class="kpi-tr">— Módulos por iniciar</div></div>
+          <div class="kpi"><div class="kpi-val" style="color:var(--teal)">0%</div><div class="kpi-lbl">Riesgo deserción</div><div class="kpi-tr">▼ Sin riesgo registrado</div></div>
+        </div>
+        <div class="g2" style="gap:14px;margin-bottom:14px">
+          <div class="card">
+            <div class="st">Tu primer paso</div>
+            <div style="background:rgba(124,111,247,.08);border:1px solid rgba(124,111,247,.2);border-radius:12px;padding:20px;text-align:center">
+              <div style="font-size:36px;margin-bottom:10px">🚀</div>
+              <div style="font-weight:700;margin-bottom:6px">¡Estás listo para empezar!</div>
+              <div class="t3 f13">Tu primer módulo estará disponible cuando comience el programa. Mientras tanto, explora la plataforma.</div>
+              <button class="btn btn-primary" style="margin-top:14px;width:100%;padding:11px" onclick="goTo('ruta',null)">Ver mi ruta de aprendizaje →</button>
+            </div>
+          </div>
+          <div class="card">
+            <div class="st">Mensaje de NEXO</div>
+            <div style="background:rgba(45,212,160,.06);border:1px solid rgba(45,212,160,.15);border-radius:12px;padding:16px;font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:12px">
+              💡 Hola, soy <strong style="color:var(--teal)">NEXO</strong>, tu asistente IA con inteligencia artificial real. Puedo responder cualquier pregunta, ayudarte con código y <strong>analizar tu riesgo de deserción</strong> académica con recomendaciones personalizadas.
+            </div>
+            <button class="btn btn-ghost" style="width:100%" onclick="goTo('nexo',null)">Hablar con NEXO →</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="st">Actividad reciente</div>
+          <div class="al al-ok"><div class="al-dot" style="background:var(--teal)"></div><div><div class="al-t">Cuenta creada exitosamente</div><div class="al-d">Tu perfil fue registrado en NexusAcad · Campuslands</div></div><div class="al-tm">Hoy</div></div>
+          <div class="al al-info"><div class="al-dot" style="background:var(--blue)"></div><div><div class="al-t">Asistente NEXO disponible</div><div class="al-d">Puedes hacer preguntas sobre el programa en cualquier momento</div></div><div class="al-tm">Hoy</div></div>
+        </div>
+      </div>
+
+      <!-- PERFIL -->
+      <div class="page" id="page-perfil">
+        <div class="ph-wrap">
+          <div class="ph-av" id="perf-av">?</div>
+          <div>
+            <div class="ph-n" id="perf-name">—</div>
+            <div class="ph-e" id="perf-email">—</div>
+            <div class="fc gap8">
+              <span class="tag t-t">Estudiante activo</span>
+              <span class="tag t-p">Fullstack Developer</span>
+            </div>
+          </div>
+        </div>
+        <div class="g2" style="gap:14px">
+          <div>
+            <div class="st">Información de la cuenta</div>
+            <div class="pdata">
+              <div class="prow"><span class="prow-k">👤 Nombre completo</span><span class="prow-v" id="pd-name">—</span></div>
+              <div class="prow"><span class="prow-k">📧 Correo electrónico</span><span class="prow-v" id="pd-email">—</span></div>
+              <div class="prow"><span class="prow-k">🔒 Contraseña</span><span class="prow-v masked">••••••••</span></div>
+              <div class="prow"><span class="prow-k">📅 Fecha de registro</span><span class="prow-v" id="pd-date">—</span></div>
+              <div class="prow"><span class="prow-k">🆔 ID Estudiante</span><span class="prow-v" id="pd-id" style="color:var(--purple-l)">—</span></div>
+            </div>
+          </div>
+          <div>
+            <div class="st">Estado académico</div>
+            <div class="pdata">
+              <div class="prow"><span class="prow-k">🎓 Programa</span><span class="prow-v" style="color:var(--teal)">Fullstack Developer</span></div>
+              <div class="prow"><span class="prow-k">📚 Semana actual</span><span class="prow-v">Semana 1 — Por iniciar</span></div>
+              <div class="prow"><span class="prow-k">📊 Módulos completados</span><span class="prow-v">0 de 7</span></div>
+              <div class="prow"><span class="prow-k">🔥 Racha de asistencia</span><span class="prow-v">0 días</span></div>
+              <div class="prow"><span class="prow-k">⭐ Puntos XP</span><span class="prow-v" style="color:var(--amber)">0 XP</span></div>
+            </div>
+            <button class="btn btn-ghost" style="width:100%;margin-top:14px;color:var(--coral)" onclick="doLogout()">⏻ Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RUTA -->
+      <div class="page" id="page-ruta">
+        <div class="g2" style="gap:14px">
+          <div>
+            <div class="st">Ruta de aprendizaje <span class="pill">IA adaptativa</span></div>
+            <div id="mods-list"></div>
+          </div>
+          <div>
+            <div class="card mb14">
+              <div class="st">Tu avance global</div>
+              <div style="text-align:center;padding:8px 0">
+                <div style="font-size:46px;font-weight:900;background:linear-gradient(135deg,var(--purple-l),var(--teal));-webkit-background-clip:text;-webkit-text-fill-color:transparent">0%</div>
+                <div class="t3 f12">del programa — ¡Todo por conquistar!</div>
+              </div>
+              <div class="pt" style="height:8px"><div class="pf" style="width:0%;background:linear-gradient(90deg,var(--purple),var(--teal))"></div></div>
+              <div class="divider"></div>
+              <div style="display:flex;justify-content:space-around;text-align:center">
+                <div><div style="font-size:20px;font-weight:800;color:var(--text3)">0</div><div class="f11 t3">Completados</div></div>
+                <div><div style="font-size:20px;font-weight:800;color:var(--text3)">0</div><div class="f11 t3">En progreso</div></div>
+                <div><div style="font-size:20px;font-weight:800;color:var(--purple-l)">7</div><div class="f11 t3">Próximos</div></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="st" style="font-size:13px">Nota de NEXO</div>
+              <div style="font-size:12px;color:var(--text2);line-height:1.6;background:rgba(124,111,247,.06);border:1px solid rgba(124,111,247,.15);border-radius:10px;padding:13px">🧠 <strong style="color:var(--purple-l)">NEXO analizará</strong> tu ritmo desde el primer módulo y ajustará tu ruta cada semana para que avances al máximo de tu potencial.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NEXO -->
+      <div class="page" id="page-nexo">
+        <div class="card" style="padding:0;overflow:hidden;height:calc(100vh - 130px);display:flex;flex-direction:column">
+          <div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px">
+            <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--teal));display:flex;align-items:center;justify-content:center;font-size:17px">🤖</div>
+            <div>
+              <div style="font-weight:700">Asistente NEXO</div>
+              <div class="f11 t3">IA Real · Análisis de riesgo · Asistente completo 24/7</div>
+            </div>
+            <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+              <span style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:50px;background:rgba(124,111,247,.2);color:var(--purple-l);border:1px solid rgba(124,111,247,.3)">🧠 IA Activa</span>
+              <div style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--teal)"><div style="width:7px;height:7px;border-radius:50%;background:var(--teal)"></div>En línea</div>
+            </div>
+          </div>
+          <div class="chat-msgs" id="chat-msgs"></div>
+          <div class="cin-wrap">
+            <div class="qchips" id="qchips">
+              <div class="chip" onclick="sendQ(this)">¿Qué aprenderé en el programa?</div>
+              <div class="chip" onclick="sendQ(this)">Analiza mi riesgo de deserción</div>
+              <div class="chip" onclick="sendQ(this)">Explícame qué es JavaScript</div>
+              <div class="chip" onclick="sendQ(this)">¿Cuánto dura el programa?</div>
+            </div>
+            <div class="cin-row">
+              <textarea class="cin" id="cin" placeholder="Pregúntame lo que quieras — código, análisis de riesgo, dudas del programa..." rows="1" onkeydown="handleKey(event)" oninput="autoR(this)"></textarea>
+              <button class="snd-btn" id="snd-btn-main" onclick="sendMsg()">➤</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIESGO -->
+      <div class="page" id="page-riesgo">
+        <div class="g2" style="gap:14px;margin-bottom:14px">
+          <div class="card" style="text-align:center">
+            <div class="st" style="justify-content:center">Score de Riesgo</div>
+            <div style="display:flex;flex-direction:column;align-items:center;padding:10px 0">
+              <div style="position:relative;width:160px;height:85px;overflow:hidden;margin:0 auto">
+                <svg width="160" height="85" viewBox="0 0 160 85" style="position:absolute;top:0;left:0">
+                  <path d="M 10 80 A 70 70 0 0 1 150 80" fill="none" stroke="#1e1e28" stroke-width="14" stroke-linecap="round"/>
+                  <path d="M 10 80 A 70 70 0 0 1 150 80" fill="none" stroke="var(--teal)" stroke-width="14" stroke-linecap="round" stroke-dasharray="220" stroke-dashoffset="218"/>
+                </svg>
+                <div style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);font-size:32px;font-weight:900;color:var(--teal)">0</div>
+              </div>
+              <div class="f11 t3" style="text-align:center;text-transform:uppercase;letter-spacing:.07em;margin-top:6px">sobre 100</div>
+              <div style="display:inline-block;font-size:12px;font-weight:700;padding:4px 12px;border-radius:50px;margin-top:8px;background:rgba(45,212,160,.15);color:var(--teal)">SIN RIESGO</div>
+            </div>
+            <div class="divider"></div>
+            <div class="f12 t2" style="line-height:1.6">Eres un estudiante nuevo. El modelo comenzará a analizar tu comportamiento desde el primer módulo.</div>
+          </div>
+          <div class="card">
+            <div class="st">Factores que se analizarán</div>
+            <div class="mb14" style="margin-bottom:12px"><div class="ph"><span class="f13" style="font-weight:600">✅ Asistencia</span><span class="t3">Sin datos</span></div><div class="pt"><div class="pf" style="width:0%;background:var(--teal)"></div></div></div>
+            <div class="mb14" style="margin-bottom:12px"><div class="ph"><span class="f13" style="font-weight:600">📈 Tendencia de notas</span><span class="t3">Sin datos</span></div><div class="pt"><div class="pf" style="width:0%;background:var(--purple)"></div></div></div>
+            <div class="mb14" style="margin-bottom:12px"><div class="ph"><span class="f13" style="font-weight:600">💻 Actividad en plataforma</span><span class="t3">Sin datos</span></div><div class="pt"><div class="pf" style="width:0%;background:var(--blue)"></div></div></div>
+            <div class="mb14" style="margin-bottom:12px"><div class="ph"><span class="f13" style="font-weight:600">⏰ Entregas a tiempo</span><span class="t3">Sin datos</span></div><div class="pt"><div class="pf" style="width:0%;background:var(--amber)"></div></div></div>
+            <div><div class="ph"><span class="f13" style="font-weight:600">👨‍🏫 Interacción con mentor</span><span class="t3">Sin datos</span></div><div class="pt"><div class="pf" style="width:0%;background:var(--teal)"></div></div></div>
+          </div>
+        </div>
+        <div class="g3" style="gap:14px">
+          <div class="card-sm"><div style="font-size:22px;margin-bottom:8px">🛡️</div><div style="font-weight:700;font-size:13px;margin-bottom:4px">Protección activa</div><div class="t3 f12">NEXO vigilará tu progreso y te alertará antes de que cualquier riesgo escale.</div></div>
+          <div class="card-sm"><div style="font-size:22px;margin-bottom:8px">📡</div><div style="font-weight:700;font-size:13px;margin-bottom:4px">Monitoreo en tiempo real</div><div class="t3 f12">El modelo se actualiza cada 24h con datos de asistencia, notas y participación.</div></div>
+          <div class="card-sm"><div style="font-size:22px;margin-bottom:8px">🤝</div><div style="font-weight:700;font-size:13px;margin-bottom:4px">Intervención rápida</div><div class="t3 f12">Si detecta riesgo, un agente IA actuará en menos de 2 horas con tu mentor.</div></div>
+        </div>
+      </div>
+
+      <!-- ALERTAS -->
+      <div class="page" id="page-alertas">
+        <div class="g2" style="gap:14px">
+          <div>
+            <div class="st">Alertas activas <span class="pill">2 nuevas</span></div>
+            <div class="al al-ok"><div class="al-dot" style="background:var(--teal)"></div><div><div class="al-t">¡Bienvenido a NexusAcad!</div><div class="al-d">Tu cuenta fue creada exitosamente. Estás listo para comenzar.</div></div><div class="al-tm">Hoy</div></div>
+            <div class="al al-info"><div class="al-dot" style="background:var(--blue)"></div><div><div class="al-t">NEXO está listo para ayudarte</div><div class="al-d">Tu asistente IA personal ya está activo. Hazle cualquier pregunta.</div></div><div class="al-tm">Hoy</div></div>
+          </div>
+          <div>
+            <div class="st">Configurar notificaciones</div>
+            <div class="card" style="padding:18px">
+              <div style="display:flex;flex-direction:column;gap:12px;font-size:13px">
+                <label class="fc gap8"><input type="checkbox" checked style="accent-color:var(--purple)"> Alertas de riesgo académico</label>
+                <label class="fc gap8"><input type="checkbox" checked style="accent-color:var(--purple)"> Recordatorios de entrega</label>
+                <label class="fc gap8"><input type="checkbox" checked style="accent-color:var(--purple)"> Mensajes del mentor</label>
+                <label class="fc gap8"><input type="checkbox" style="accent-color:var(--purple)"> Recomendaciones de NEXO</label>
+                <label class="fc gap8"><input type="checkbox" checked style="accent-color:var(--purple)"> Logros desbloqueados</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LOGROS -->
+      <div class="page" id="page-logros">
+        <div class="g2" style="gap:14px;margin-bottom:14px">
+          <div class="card">
+            <div class="st">Racha de asistencia</div>
+            <div style="font-size:34px;font-weight:900;color:var(--text3);margin-bottom:8px">0 días</div>
+            <div class="f12 t3" style="margin-bottom:8px">Esta semana — aún sin registro:</div>
+            <div class="stk"><div class="stk-d">L</div><div class="stk-d">M</div><div class="stk-d">X</div><div class="stk-d">J</div><div class="stk-d">V</div><div class="stk-d">S</div><div class="stk-d">D</div></div>
+          </div>
+          <div class="card">
+            <div class="st">Puntos de experiencia</div>
+            <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:12px">
+              <div style="font-size:40px;font-weight:900;color:var(--text3)">0</div>
+              <div class="t3 f12">XP acumulados</div>
+            </div>
+            <div><div class="ph"><span>Nivel 1</span><span class="t3">0 / 100 XP para nivel 2</span></div><div class="pt" style="height:8px"><div class="pf" style="width:0%;background:linear-gradient(90deg,var(--amber),var(--coral))"></div></div></div>
+            <div class="divider"></div>
+            <div style="font-size:12px;color:var(--text2)">¡Completa módulos y actividades para ganar XP!</div>
+          </div>
+        </div>
+        <div class="st">Insignias — ¡Desbloquéalas durante el programa!</div>
+        <div class="bdg-grid">
+          <div class="bdg-card"><div class="bdg-ico">🔥</div><div class="bdg-n">Constancia de Hierro</div><div class="bdg-d">14 días consecutivos</div></div>
+          <div class="bdg-card"><div class="bdg-ico">⚡</div><div class="bdg-n">Velocidad Luz</div><div class="bdg-d">Módulo en tiempo récord</div></div>
+          <div class="bdg-card"><div class="bdg-ico">🎯</div><div class="bdg-n">Precisión Total</div><div class="bdg-d">5 quizzes con +4.0</div></div>
+          <div class="bdg-card"><div class="bdg-ico">🧠</div><div class="bdg-n">Curioso Imparable</div><div class="bdg-d">50 preguntas a NEXO</div></div>
+          <div class="bdg-card"><div class="bdg-ico">🏅</div><div class="bdg-n">Top 10 Cohorte</div><div class="bdg-d">Entre los mejores</div></div>
+          <div class="bdg-card"><div class="bdg-ico">🌟</div><div class="bdg-n">Proyecto Estelar</div><div class="bdg-d">Nota máxima en proyecto</div></div>
+          <div class="bdg-card"><div class="bdg-ico">🤝</div><div class="bdg-n">Mentor Activo</div><div class="bdg-d">10 sesiones con mentor</div></div>
+          <div class="bdg-card"><div class="bdg-ico">🚀</div><div class="bdg-n">Graduado Fullstack</div><div class="bdg-d">Completar el programa</div></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- ══ SCREEN 4: APP MENTOR ══ -->
+<div class="screen" id="screen-app-mentor">
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">N</div>
+      <div class="logo-text">Nexus<em>Acad</em></div>
+    </div>
+    <nav class="nav">
+      <div class="nav-sec">Principal</div>
+      <div class="nav-item active" onclick="goToM('m-dashboard',this)"><span class="ni">🏠</span>Dashboard</div>
+      <div class="nav-item" onclick="goToM('m-perfil',this)"><span class="ni">👤</span>Mi Perfil</div>
+      <div class="nav-item" onclick="goToM('m-estudiantes',this)"><span class="ni">👥</span>Mis Estudiantes</div>
+      <div class="nav-item" onclick="goToM('m-nexo',this)"><span class="ni">🤖</span>Asistente NEXO</div>
+      <div class="nav-sec">Gestión</div>
+      <div class="nav-item" onclick="goToM('m-riesgo',this)"><span class="ni">📊</span>Riesgo del Grupo</div>
+      <div class="nav-item" onclick="goToM('m-alertas',this)"><span class="ni">🔔</span>Alertas<span class="nbadge">3</span></div>
+      <div class="nav-item" onclick="goToM('m-sesiones',this)"><span class="ni">📅</span>Sesiones</div>
+    </nav>
+    <div class="side-profile">
+      <div class="side-card">
+        <div class="av" id="m-side-av">?</div>
+        <div>
+          <div style="font-size:13px;font-weight:700" id="m-side-name">—</div>
+          <div style="font-size:11px;color:var(--text3)">Mentor · Campuslands</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title" id="m-page-title">Dashboard Mentor</div>
+        <div style="font-size:12px;color:var(--text3)">Panel de Mentoría · NexusAcad</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-ghost" onclick="goToM('m-nexo',null)">💬 NEXO</button>
+        <div class="notif-btn" onclick="goToM('m-alertas',null)">🔔<div class="notif-dot"></div></div>
+        <button class="btn btn-ghost" onclick="doLogout()" style="color:var(--coral)">⏻</button>
+      </div>
+    </div>
+    <div class="content">
+
+      <!-- MENTOR DASHBOARD -->
+      <div class="page active" id="page-m-dashboard">
+        <div style="margin-bottom:18px">
+          <div style="font-size:20px;font-weight:800;margin-bottom:4px">Hola, <span id="m-dash-name" style="color:var(--purple-l)">—</span> 👋</div>
+          <div class="t3 f13">Panel de mentoría — supervisa el progreso de tu grupo en tiempo real.</div>
+        </div>
+        <div class="g4 mb14">
+          <div class="kpi"><div class="kpi-val" style="color:var(--purple-l)">12</div><div class="kpi-lbl">Estudiantes activos</div><div class="kpi-tr">▲ 2 nuevos esta semana</div></div>
+          <div class="kpi"><div class="kpi-val" style="color:var(--teal)">87%</div><div class="kpi-lbl">Asistencia promedio</div><div class="kpi-tr">▲ +3% vs semana pasada</div></div>
+          <div class="kpi"><div class="kpi-val" style="color:var(--amber)">3.8</div><div class="kpi-lbl">Nota promedio grupo</div><div class="kpi-tr">— Módulo actual: JS ES6+</div></div>
+          <div class="kpi"><div class="kpi-val" style="color:var(--coral)">2</div><div class="kpi-lbl">En riesgo alto</div><div class="kpi-tr">▲ Requieren intervención</div></div>
+        </div>
+        <div class="g2" style="gap:14px;margin-bottom:14px">
+          <div class="card">
+            <div class="st">Estudiantes en riesgo 🚨</div>
+            <div class="al al-crit"><div class="al-dot" style="background:var(--coral)"></div><div><div class="al-t">Carlos M. — Riesgo crítico 78%</div><div class="al-d">Asistencia 55% · Promedio 2.8 · Sin entregas esta semana</div></div><div class="al-tm">Hoy</div></div>
+            <div class="al al-warn"><div class="al-dot" style="background:var(--amber)"></div><div><div class="al-t">Laura P. — Riesgo alto 62%</div><div class="al-d">Motivación baja · 2 entregas tarde</div></div><div class="al-tm">Ayer</div></div>
+            <div class="al al-ok"><div class="al-dot" style="background:var(--teal)"></div><div><div class="al-t">Grupo general — Estable</div><div class="al-d">10 estudiantes sin alertas activas</div></div><div class="al-tm">Hoy</div></div>
+          </div>
+          <div class="card">
+            <div class="st">Próximas sesiones 📅</div>
+            <div class="card-sm mb14" style="margin-bottom:10px">
+              <div style="font-weight:700;font-size:13px;margin-bottom:4px">🗓 Hoy — 10:00 AM</div>
+              <div class="t2 f12">Revisión módulo JavaScript ES6+ · Grupo A</div>
+              <span style="font-size:11px;font-weight:600;padding:3px 9px;border-radius:50px;background:rgba(45,212,160,.15);color:var(--teal);margin-top:6px;display:inline-block">En 2 horas</span>
+            </div>
+            <div class="card-sm mb14" style="margin-bottom:10px">
+              <div style="font-weight:700;font-size:13px;margin-bottom:4px">🗓 Mañana — 2:00 PM</div>
+              <div class="t2 f12">Sesión de mentoría individual · Carlos M.</div>
+              <span style="font-size:11px;font-weight:600;padding:3px 9px;border-radius:50px;background:rgba(240,96,96,.15);color:var(--coral);margin-top:6px;display:inline-block">Urgente</span>
+            </div>
+            <button class="btn btn-primary" style="width:100%;padding:10px" onclick="goToM('m-sesiones',null)">Ver todas las sesiones →</button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="st">Mensaje de NEXO para mentores</div>
+          <div style="background:rgba(45,212,160,.06);border:1px solid rgba(45,212,160,.15);border-radius:12px;padding:16px;font-size:13px;color:var(--text2);line-height:1.6">
+            🤖 <strong style="color:var(--teal)">NEXO detectó</strong> que <strong>Carlos M.</strong> ha disminuido su actividad un 40% esta semana. Se recomienda una intervención antes del viernes para evitar escalamiento del riesgo. <a href="#" onclick="goToM('m-nexo',null);return false" style="color:var(--purple-l);text-decoration:none">Consultar estrategia con NEXO →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- MENTOR PERFIL -->
+      <div class="page" id="page-m-perfil">
+        <div class="ph-wrap">
+          <div class="ph-av" id="m-perf-av">?</div>
+          <div>
+            <div class="ph-n" id="m-perf-name">—</div>
+            <div class="ph-e" id="m-perf-email">—</div>
+            <div class="fc gap8">
+              <span class="tag t-t">Mentor activo</span>
+              <span class="tag t-p">Fullstack Developer</span>
+            </div>
+          </div>
+        </div>
+        <div class="g2" style="gap:14px">
+          <div>
+            <div class="st">Información de la cuenta</div>
+            <div class="pdata">
+              <div class="prow"><span class="prow-k">👤 Nombre completo</span><span class="prow-v" id="m-pd-name">—</span></div>
+              <div class="prow"><span class="prow-k">📧 Correo electrónico</span><span class="prow-v" id="m-pd-email">—</span></div>
+              <div class="prow"><span class="prow-k">🔒 Contraseña</span><span class="prow-v masked">••••••••</span></div>
+              <div class="prow"><span class="prow-k">📅 Fecha de registro</span><span class="prow-v" id="m-pd-date">—</span></div>
+              <div class="prow"><span class="prow-k">🆔 ID Mentor</span><span class="prow-v" id="m-pd-id" style="color:var(--purple-l)">—</span></div>
+            </div>
+          </div>
+          <div>
+            <div class="st">Estadísticas de mentoría</div>
+            <div class="pdata">
+              <div class="prow"><span class="prow-k">👥 Estudiantes a cargo</span><span class="prow-v" style="color:var(--teal)">12</span></div>
+              <div class="prow"><span class="prow-k">📚 Módulo actual</span><span class="prow-v">JavaScript ES6+</span></div>
+              <div class="prow"><span class="prow-k">✅ Sesiones completadas</span><span class="prow-v">24 sesiones</span></div>
+              <div class="prow"><span class="prow-k">⭐ Valoración promedio</span><span class="prow-v" style="color:var(--amber)">4.7 / 5.0</span></div>
+              <div class="prow"><span class="prow-k">📊 Intervenciones activas</span><span class="prow-v" style="color:var(--coral)">2</span></div>
+            </div>
+            <button class="btn btn-ghost" style="width:100%;margin-top:14px;color:var(--coral)" onclick="doLogout()">⏻ Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- MENTOR ESTUDIANTES -->
+      <div class="page" id="page-m-estudiantes">
+        <div class="st">Mis Estudiantes <span class="pill">12 activos</span></div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div class="mod-item"><div class="mod-ico" style="background:rgba(240,96,96,.15);font-size:16px">🔴</div><div><div class="mod-n">Carlos Martínez</div><div class="mod-d">Asistencia 55% · Promedio 2.8 · Módulo 2</div></div><span class="mod-st" style="background:rgba(240,96,96,.15);color:var(--coral)">Riesgo crítico</span></div>
+          <div class="mod-item"><div class="mod-ico" style="background:rgba(245,166,35,.15);font-size:16px">🟡</div><div><div class="mod-n">Laura Pérez</div><div class="mod-d">Asistencia 72% · Promedio 3.2 · Módulo 2</div></div><span class="mod-st" style="background:rgba(245,166,35,.15);color:var(--amber)">Riesgo alto</span></div>
+          <div class="mod-item"><div class="mod-ico" style="background:rgba(45,212,160,.15);font-size:16px">🟢</div><div><div class="mod-n">Andrés Gómez</div><div class="mod-d">Asistencia 95% · Promedio 4.5 · Módulo 3</div></div><span class="mod-st" style="background:rgba(45,212,160,.15);color:var(--teal)">Sin riesgo</span></div>
+          <div class="mod-item"><div class="mod-ico" style="background:rgba(45,212,160,.15);font-size:16px">🟢</div><div><div class="mod-n">Valentina Ríos</div><div class="mod-d">Asistencia 91% · Promedio 4.1 · Módulo 3</div></div><span class="mod-st" style="background:rgba(45,212,160,.15);color:var(--teal)">Sin riesgo</span></div>
+          <div class="mod-item"><div class="mod-ico" style="background:rgba(45,212,160,.15);font-size:16px">🟢</div><div><div class="mod-n">Juan Vargas</div><div class="mod-d">Asistencia 88% · Promedio 3.9 · Módulo 2</div></div><span class="mod-st" style="background:rgba(45,212,160,.15);color:var(--teal)">Sin riesgo</span></div>
+          <div class="mod-item"><div class="mod-ico" style="background:rgba(74,158,255,.15);font-size:16px">🔵</div><div><div class="mod-n">María Torres</div><div class="mod-d">Asistencia 80% · Promedio 3.5 · Módulo 2</div></div><span class="mod-st" style="background:rgba(74,158,255,.15);color:var(--blue)">Riesgo bajo</span></div>
+          <div class="mod-item"><div class="mod-ico" style="background:rgba(45,212,160,.15);font-size:16px">🟢</div><div><div class="mod-n">Sebastián Cruz</div><div class="mod-d">Asistencia 93% · Promedio 4.3 · Módulo 3</div></div><span class="mod-st" style="background:rgba(45,212,160,.15);color:var(--teal)">Sin riesgo</span></div>
+          <div class="mod-item"><div class="mod-ico" style="background:rgba(45,212,160,.15);font-size:16px">🟢</div><div><div class="mod-n">Daniela Morales</div><div class="mod-d">Asistencia 89% · Promedio 4.0 · Módulo 2</div></div><span class="mod-st" style="background:rgba(45,212,160,.15);color:var(--teal)">Sin riesgo</span></div>
+        </div>
+      </div>
+
+      <!-- MENTOR NEXO -->
+      <div class="page" id="page-m-nexo">
+        <div class="card" style="padding:0;overflow:hidden;height:calc(100vh - 130px);display:flex;flex-direction:column">
+          <div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px">
+            <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--teal));display:flex;align-items:center;justify-content:center;font-size:17px">🤖</div>
+            <div>
+              <div style="font-weight:700">Asistente NEXO — Modo Mentor</div>
+              <div class="f11 t3">Estrategias de intervención · Análisis grupal · Soporte pedagógico</div>
+            </div>
+            <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+              <span style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:50px;background:rgba(124,111,247,.2);color:var(--purple-l);border:1px solid rgba(124,111,247,.3)">🧠 IA Activa</span>
+              <div style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--teal)"><div style="width:7px;height:7px;border-radius:50%;background:var(--teal)"></div>En línea</div>
+            </div>
+          </div>
+          <div class="chat-msgs" id="m-chat-msgs"></div>
+          <div class="cin-wrap">
+            <div class="qchips" id="m-qchips">
+              <div class="chip" onclick="sendMQ(this)">¿Cómo intervenir con un estudiante en riesgo crítico?</div>
+              <div class="chip" onclick="sendMQ(this)">Analiza el rendimiento de mi grupo</div>
+              <div class="chip" onclick="sendMQ(this)">Estrategias para mejorar asistencia</div>
+              <div class="chip" onclick="sendMQ(this)">¿Cómo motivar a estudiantes desmotivados?</div>
+            </div>
+            <div class="cin-row">
+              <textarea class="cin" id="m-cin" placeholder="Consulta estrategias de intervención, análisis del grupo, técnicas pedagógicas..." rows="1" onkeydown="handleMKey(event)" oninput="autoR(this)"></textarea>
+              <button class="snd-btn" id="m-snd-btn" onclick="sendMMsg()">➤</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MENTOR RIESGO -->
+      <div class="page" id="page-m-riesgo">
+        <div class="st">Mapa de Riesgo del Grupo <span class="pill">Actualizado hoy</span></div>
+        <div class="g4 mb14">
+          <div class="kpi"><div class="kpi-val" style="color:var(--coral)">1</div><div class="kpi-lbl">Riesgo crítico</div></div>
+          <div class="kpi"><div class="kpi-val" style="color:var(--amber)">1</div><div class="kpi-lbl">Riesgo alto</div></div>
+          <div class="kpi"><div class="kpi-val" style="color:var(--blue)">1</div><div class="kpi-lbl">Riesgo bajo</div></div>
+          <div class="kpi"><div class="kpi-val" style="color:var(--teal)">9</div><div class="kpi-lbl">Sin riesgo</div></div>
+        </div>
+        <div class="g2" style="gap:14px">
+          <div class="card">
+            <div class="st">Factores críticos del grupo</div>
+            <div class="mb14"><div class="ph"><span class="f13" style="font-weight:600">📊 Asistencia promedio</span><span style="color:var(--teal)">87%</span></div><div class="pt"><div class="pf" style="width:87%;background:var(--teal)"></div></div></div>
+            <div class="mb14"><div class="ph"><span class="f13" style="font-weight:600">📈 Promedio de notas</span><span style="color:var(--amber)">3.8 / 5.0</span></div><div class="pt"><div class="pf" style="width:76%;background:var(--amber)"></div></div></div>
+            <div class="mb14"><div class="ph"><span class="f13" style="font-weight:600">⏰ Entregas a tiempo</span><span style="color:var(--purple-l)">79%</span></div><div class="pt"><div class="pf" style="width:79%;background:var(--purple)"></div></div></div>
+            <div><div class="ph"><span class="f13" style="font-weight:600">💬 Participación en clases</span><span style="color:var(--blue)">65%</span></div><div class="pt"><div class="pf" style="width:65%;background:var(--blue)"></div></div></div>
+          </div>
+          <div class="card">
+            <div class="st">Recomendaciones de NEXO 🤖</div>
+            <div class="al al-crit"><div class="al-dot" style="background:var(--coral)"></div><div><div class="al-t">Intervenir con Carlos M. antes del viernes</div><div class="al-d">Programar sesión de urgencia y notificar coordinación</div></div></div>
+            <div class="al al-warn"><div class="al-dot" style="background:var(--amber)"></div><div><div class="al-t">Laura P. necesita acompañamiento emocional</div><div class="al-d">Conectar con psicoorientación del campus</div></div></div>
+            <div class="al al-info"><div class="al-dot" style="background:var(--blue)"></div><div><div class="al-t">Reforzar ejercicios de JS para el grupo</div><div class="al-d">El 40% del grupo tuvo dificultades con Promesas</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MENTOR ALERTAS -->
+      <div class="page" id="page-m-alertas">
+        <div class="st">Alertas del sistema <span class="pill">3 nuevas</span></div>
+        <div class="al al-crit"><div class="al-dot" style="background:var(--coral)"></div><div><div class="al-t">Carlos M. — Sin actividad hace 5 días</div><div class="al-d">El estudiante no ha accedido a la plataforma ni entregado actividades. Riesgo: 78%</div></div><div class="al-tm">Hoy 8AM</div></div>
+        <div class="al al-warn"><div class="al-dot" style="background:var(--amber)"></div><div><div class="al-t">Laura P. — Tercera entrega tardía</div><div class="al-d">Patrón de demora detectado en las últimas 3 semanas consecutivas</div></div><div class="al-tm">Ayer</div></div>
+        <div class="al al-info"><div class="al-dot" style="background:var(--blue)"></div><div><div class="al-t">Sesión grupal mañana a las 2:00 PM</div><div class="al-d">Recuerda preparar los ejercicios de async/await para el refuerzo</div></div><div class="al-tm">Ayer</div></div>
+        <div class="al al-ok"><div class="al-dot" style="background:var(--teal)"></div><div><div class="al-t">Andrés G. completó el Módulo 3 con distinción</div><div class="al-d">Nota: 4.9/5.0 — ¡Comparte este logro con el grupo!</div></div><div class="al-tm">Lun</div></div>
+      </div>
+
+      <!-- MENTOR SESIONES -->
+      <div class="page" id="page-m-sesiones">
+        <div class="st">Agenda de Sesiones</div>
+        <div class="g2" style="gap:14px">
+          <div>
+            <div style="font-weight:700;font-size:13px;color:var(--text3);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em">Esta semana</div>
+            <div class="mod-item" style="flex-direction:column;align-items:flex-start;gap:6px"><div style="display:flex;align-items:center;gap:10px;width:100%"><div class="mod-ico">🗓</div><div><div class="mod-n">Revisión JS ES6+ · Grupo A</div><div class="mod-d">Hoy — 10:00 AM · Sala 3</div></div><span class="mod-st" style="background:rgba(45,212,160,.15);color:var(--teal)">Próxima</span></div></div>
+            <div class="mod-item" style="flex-direction:column;align-items:flex-start;gap:6px"><div style="display:flex;align-items:center;gap:10px;width:100%"><div class="mod-ico">🚨</div><div><div class="mod-n">Sesión individual · Carlos M.</div><div class="mod-d">Mañana — 2:00 PM · Virtual</div></div><span class="mod-st" style="background:rgba(240,96,96,.15);color:var(--coral)">Urgente</span></div></div>
+            <div class="mod-item" style="flex-direction:column;align-items:flex-start;gap:6px"><div style="display:flex;align-items:center;gap:10px;width:100%"><div class="mod-ico">👥</div><div><div class="mod-n">Retroalimentación módulo 2</div><div class="mod-d">Viernes — 3:00 PM · Sala 1</div></div><span class="mod-st">Programada</span></div></div>
+          </div>
+          <div>
+            <div style="font-weight:700;font-size:13px;color:var(--text3);margin-bottom:10px;text-transform:uppercase;letter-spacing:.06em">Sesiones recientes</div>
+            <div class="mod-item"><div class="mod-ico">✅</div><div><div class="mod-n">Kickoff módulo JS · Grupo A</div><div class="mod-d">Lunes pasado · 12 asistentes</div></div><span class="mod-st" style="background:rgba(45,212,160,.15);color:var(--teal)">Completada</span></div>
+            <div class="mod-item"><div class="mod-ico">✅</div><div><div class="mod-n">Quiz HTML & CSS · Revisión</div><div class="mod-d">Semana pasada · 11 asistentes</div></div><span class="mod-st" style="background:rgba(45,212,160,.15);color:var(--teal)">Completada</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- ══ SCREEN 5: APP COORDINADOR ══ -->
+<div class="screen" id="screen-app-coordinador">
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">N</div>
+      <div class="logo-text">Nexus<em>Acad</em></div>
+    </div>
+    <nav class="nav">
+      <div class="nav-sec">Principal</div>
+      <div class="nav-item active" onclick="goToC('c-dashboard',this)"><span class="ni">🏠</span>Dashboard</div>
+      <div class="nav-item" onclick="goToC('c-perfil',this)"><span class="ni">👤</span>Mi Perfil</div>
+      <div class="nav-item" onclick="goToC('c-cohortes',this)"><span class="ni">🏛️</span>Cohortes</div>
+      <div class="nav-item" onclick="goToC('c-nexo',this)"><span class="ni">🤖</span>Asistente NEXO</div>
+      <div class="nav-sec">Analítica</div>
+      <div class="nav-item" onclick="goToC('c-desercion',this)"><span class="ni">📉</span>Deserción<span class="nbadge">5</span></div>
+      <div class="nav-item" onclick="goToC('c-reportes',this)"><span class="ni">📋</span>Reportes</div>
+      <div class="nav-item" onclick="goToC('c-mentores',this)"><span class="ni">👨‍🏫</span>Mentores</div>
+    </nav>
+    <div class="side-profile">
+      <div class="side-card">
+        <div class="av" id="c-side-av">?</div>
+        <div>
+          <div style="font-size:13px;font-weight:700" id="c-side-name">—</div>
+          <div style="font-size:11px;color:var(--text3)">Coordinador · Campuslands</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title" id="c-page-title">Dashboard Coordinación</div>
+        <div style="font-size:12px;color:var(--text3)">Panel de Coordinación · NexusAcad</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-ghost" onclick="goToC('c-nexo',null)">💬 NEXO</button>
+        <div class="notif-btn" onclick="goToC('c-desercion',null)">🔔<div class="notif-dot"></div></div>
+        <button class="btn btn-ghost" onclick="doLogout()" style="color:var(--coral)">⏻</button>
+      </div>
+    </div>
+    <div class="content">
+
+      <!-- COORD DASHBOARD -->
+      <div class="page active" id="page-c-dashboard">
+        <div style="margin-bottom:18px">
+          <div style="font-size:20px;font-weight:800;margin-bottom:4px">Hola, <span id="c-dash-name" style="color:var(--purple-l)">—</span> 👋</div>
+          <div class="t3 f13">Vista institucional — 3 cohortes activas en curso ahora mismo.</div>
+        </div>
+        <div class="g4 mb14">
+          <div class="kpi"><div class="kpi-val" style="color:var(--purple-l)">67</div><div class="kpi-lbl">Estudiantes totales</div><div class="kpi-tr">▲ 3 cohortes activas</div></div>
+          <div class="kpi"><div class="kpi-val" style="color:var(--teal)">84%</div><div class="kpi-lbl">Asistencia global</div><div class="kpi-tr">▲ +2% vs mes anterior</div></div>
+          <div class="kpi"><div class="kpi-val" style="color:var(--coral)">5</div><div class="kpi-lbl">Riesgo crítico</div><div class="kpi-tr">▲ Requieren acción inmediata</div></div>
+          <div class="kpi"><div class="kpi-val" style="color:var(--amber)">11%</div><div class="kpi-lbl">Tasa deserción</div><div class="kpi-tr">▼ -4% vs cohorte anterior</div></div>
+        </div>
+        <div class="g3" style="gap:14px;margin-bottom:14px">
+          <div class="card">
+            <div class="st" style="font-size:13px">Cohorte A — Semana 8</div>
+            <div style="font-size:28px;font-weight:900;color:var(--teal);margin-bottom:4px">23</div>
+            <div class="f12 t3 mb14" style="margin-bottom:8px">estudiantes activos</div>
+            <div><div class="ph"><span class="f12">Asistencia</span><span class="f12" style="color:var(--teal)">91%</span></div><div class="pt"><div class="pf" style="width:91%;background:var(--teal)"></div></div></div>
+            <div class="mt14" style="margin-top:8px"><div class="ph"><span class="f12">Promedio</span><span class="f12" style="color:var(--amber)">3.9</span></div><div class="pt"><div class="pf" style="width:78%;background:var(--amber)"></div></div></div>
+            <div class="divider"></div>
+            <span style="font-size:11px;padding:3px 9px;border-radius:50px;background:rgba(45,212,160,.15);color:var(--teal);font-weight:700">1 en riesgo</span>
+          </div>
+          <div class="card">
+            <div class="st" style="font-size:13px">Cohorte B — Semana 4</div>
+            <div style="font-size:28px;font-weight:900;color:var(--amber);margin-bottom:4px">25</div>
+            <div class="f12 t3 mb14" style="margin-bottom:8px">estudiantes activos</div>
+            <div><div class="ph"><span class="f12">Asistencia</span><span class="f12" style="color:var(--amber)">79%</span></div><div class="pt"><div class="pf" style="width:79%;background:var(--amber)"></div></div></div>
+            <div class="mt14" style="margin-top:8px"><div class="ph"><span class="f12">Promedio</span><span class="f12" style="color:var(--amber)">3.6</span></div><div class="pt"><div class="pf" style="width:72%;background:var(--amber)"></div></div></div>
+            <div class="divider"></div>
+            <span style="font-size:11px;padding:3px 9px;border-radius:50px;background:rgba(240,96,96,.15);color:var(--coral);font-weight:700">3 en riesgo</span>
+          </div>
+          <div class="card">
+            <div class="st" style="font-size:13px">Cohorte C — Semana 1</div>
+            <div style="font-size:28px;font-weight:900;color:var(--blue);margin-bottom:4px">19</div>
+            <div class="f12 t3 mb14" style="margin-bottom:8px">estudiantes activos</div>
+            <div><div class="ph"><span class="f12">Asistencia</span><span class="f12" style="color:var(--teal)">96%</span></div><div class="pt"><div class="pf" style="width:96%;background:var(--teal)"></div></div></div>
+            <div class="mt14" style="margin-top:8px"><div class="ph"><span class="f12">Promedio</span><span class="f12" style="color:var(--teal)">4.2</span></div><div class="pt"><div class="pf" style="width:84%;background:var(--teal)"></div></div></div>
+            <div class="divider"></div>
+            <span style="font-size:11px;padding:3px 9px;border-radius:50px;background:rgba(240,96,96,.15);color:var(--coral);font-weight:700">1 en riesgo</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="st">Análisis institucional de NEXO</div>
+          <div style="background:rgba(45,212,160,.06);border:1px solid rgba(45,212,160,.15);border-radius:12px;padding:16px;font-size:13px;color:var(--text2);line-height:1.6">
+            📊 <strong style="color:var(--teal)">NEXO detectó</strong> que la Cohorte B muestra la mayor concentración de riesgo. El patrón coincide con la semana 3-5, históricamente crítica. Se recomienda reforzar mentoría en esta etapa. <a href="#" onclick="goToC('c-nexo',null);return false" style="color:var(--purple-l);text-decoration:none">Pedir recomendaciones completas →</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- COORD PERFIL -->
+      <div class="page" id="page-c-perfil">
+        <div class="ph-wrap">
+          <div class="ph-av" id="c-perf-av">?</div>
+          <div>
+            <div class="ph-n" id="c-perf-name">—</div>
+            <div class="ph-e" id="c-perf-email">—</div>
+            <div class="fc gap8">
+              <span class="tag t-t">Coordinador activo</span>
+              <span class="tag t-p">Campuslands</span>
+            </div>
+          </div>
+        </div>
+        <div class="g2" style="gap:14px">
+          <div>
+            <div class="st">Información de la cuenta</div>
+            <div class="pdata">
+              <div class="prow"><span class="prow-k">👤 Nombre completo</span><span class="prow-v" id="c-pd-name">—</span></div>
+              <div class="prow"><span class="prow-k">📧 Correo electrónico</span><span class="prow-v" id="c-pd-email">—</span></div>
+              <div class="prow"><span class="prow-k">🔒 Contraseña</span><span class="prow-v masked">••••••••</span></div>
+              <div class="prow"><span class="prow-k">📅 Fecha de registro</span><span class="prow-v" id="c-pd-date">—</span></div>
+              <div class="prow"><span class="prow-k">🆔 ID Coordinador</span><span class="prow-v" id="c-pd-id" style="color:var(--purple-l)">—</span></div>
+            </div>
+          </div>
+          <div>
+            <div class="st">Resumen institucional</div>
+            <div class="pdata">
+              <div class="prow"><span class="prow-k">🏛️ Cohortes activas</span><span class="prow-v" style="color:var(--teal)">3</span></div>
+              <div class="prow"><span class="prow-k">👥 Total estudiantes</span><span class="prow-v">67</span></div>
+              <div class="prow"><span class="prow-k">👨‍🏫 Mentores activos</span><span class="prow-v">4</span></div>
+              <div class="prow"><span class="prow-k">📉 Tasa de deserción</span><span class="prow-v" style="color:var(--amber)">11%</span></div>
+              <div class="prow"><span class="prow-k">🚨 Alertas críticas</span><span class="prow-v" style="color:var(--coral)">5</span></div>
+            </div>
+            <button class="btn btn-ghost" style="width:100%;margin-top:14px;color:var(--coral)" onclick="doLogout()">⏻ Cerrar sesión</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- COORD COHORTES -->
+      <div class="page" id="page-c-cohortes">
+        <div class="st">Gestión de Cohortes <span class="pill">3 activas</span></div>
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><div><div style="font-size:16px;font-weight:800">Cohorte A</div><div class="f12 t3">Iniciada hace 8 semanas · Finaliza en 12 semanas</div></div><span style="font-size:12px;padding:5px 12px;border-radius:50px;background:rgba(45,212,160,.15);color:var(--teal);font-weight:700">En progreso</span></div><div class="g3" style="gap:10px"><div class="card-sm" style="text-align:center"><div style="font-size:22px;font-weight:800;color:var(--teal)">23</div><div class="f11 t3">Activos</div></div><div class="card-sm" style="text-align:center"><div style="font-size:22px;font-weight:800;color:var(--amber)">3.9</div><div class="f11 t3">Promedio</div></div><div class="card-sm" style="text-align:center"><div style="font-size:22px;font-weight:800;color:var(--coral)">1</div><div class="f11 t3">En riesgo</div></div></div></div>
+          <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><div><div style="font-size:16px;font-weight:800">Cohorte B</div><div class="f12 t3">Iniciada hace 4 semanas · Etapa crítica</div></div><span style="font-size:12px;padding:5px 12px;border-radius:50px;background:rgba(245,166,35,.15);color:var(--amber);font-weight:700">Atención requerida</span></div><div class="g3" style="gap:10px"><div class="card-sm" style="text-align:center"><div style="font-size:22px;font-weight:800;color:var(--amber)">25</div><div class="f11 t3">Activos</div></div><div class="card-sm" style="text-align:center"><div style="font-size:22px;font-weight:800;color:var(--amber)">3.6</div><div class="f11 t3">Promedio</div></div><div class="card-sm" style="text-align:center"><div style="font-size:22px;font-weight:800;color:var(--coral)">3</div><div class="f11 t3">En riesgo</div></div></div></div>
+          <div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><div><div style="font-size:16px;font-weight:800">Cohorte C</div><div class="f12 t3">Iniciada esta semana · Onboarding</div></div><span style="font-size:12px;padding:5px 12px;border-radius:50px;background:rgba(74,158,255,.15);color:var(--blue);font-weight:700">Inicio reciente</span></div><div class="g3" style="gap:10px"><div class="card-sm" style="text-align:center"><div style="font-size:22px;font-weight:800;color:var(--blue)">19</div><div class="f11 t3">Activos</div></div><div class="card-sm" style="text-align:center"><div style="font-size:22px;font-weight:800;color:var(--teal)">4.2</div><div class="f11 t3">Promedio</div></div><div class="card-sm" style="text-align:center"><div style="font-size:22px;font-weight:800;color:var(--coral)">1</div><div class="f11 t3">En riesgo</div></div></div></div>
+        </div>
+      </div>
+
+      <!-- COORD NEXO -->
+      <div class="page" id="page-c-nexo">
+        <div class="card" style="padding:0;overflow:hidden;height:calc(100vh - 130px);display:flex;flex-direction:column">
+          <div style="padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px">
+            <div style="width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--teal));display:flex;align-items:center;justify-content:center;font-size:17px">🤖</div>
+            <div>
+              <div style="font-weight:700">Asistente NEXO — Modo Coordinación</div>
+              <div class="f11 t3">Analítica institucional · Predicción de deserción · Reportes</div>
+            </div>
+            <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+              <span style="font-size:10px;font-weight:700;padding:3px 9px;border-radius:50px;background:rgba(124,111,247,.2);color:var(--purple-l);border:1px solid rgba(124,111,247,.3)">🧠 IA Activa</span>
+              <div style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--teal)"><div style="width:7px;height:7px;border-radius:50%;background:var(--teal)"></div>En línea</div>
+            </div>
+          </div>
+          <div class="chat-msgs" id="c-chat-msgs"></div>
+          <div class="cin-wrap">
+            <div class="qchips" id="c-qchips">
+              <div class="chip" onclick="sendCQ(this)">¿Cuál cohorte tiene mayor riesgo de deserción?</div>
+              <div class="chip" onclick="sendCQ(this)">Genera un reporte semanal del programa</div>
+              <div class="chip" onclick="sendCQ(this)">Estrategias para reducir la deserción en semana 4</div>
+              <div class="chip" onclick="sendCQ(this)">¿Cómo mejorar la retención estudiantil?</div>
+            </div>
+            <div class="cin-row">
+              <textarea class="cin" id="c-cin" placeholder="Consulta analítica institucional, predicciones de deserción, reportes..." rows="1" onkeydown="handleCKey(event)" oninput="autoR(this)"></textarea>
+              <button class="snd-btn" id="c-snd-btn" onclick="sendCMsg()">➤</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COORD DESERCION -->
+      <div class="page" id="page-c-desercion">
+        <div class="st">Monitor de Deserción <span class="pill">5 alertas críticas</span></div>
+        <div class="g4 mb14">
+          <div class="kpi"><div class="kpi-val" style="color:var(--coral)">11%</div><div class="kpi-lbl">Tasa actual</div><div class="kpi-tr">▼ -4% vs cohorte anterior</div></div>
+          <div class="kpi"><div class="kpi-val" style="color:var(--amber)">5</div><div class="kpi-lbl">Casos críticos</div><div class="kpi-tr">▲ 3 nuevos esta semana</div></div>
+          <div class="kpi"><div class="kpi-val" style="color:var(--teal)">8</div><div class="kpi-lbl">Intervenciones activas</div><div class="kpi-tr">— En seguimiento</div></div>
+          <div class="kpi"><div class="kpi-val" style="color:var(--purple-l)">73%</div><div class="kpi-lbl">Tasa de retención</div><div class="kpi-tr">▲ Objetivo: 80%</div></div>
+        </div>
+        <div class="g2" style="gap:14px">
+          <div class="card">
+            <div class="st">Casos críticos activos</div>
+            <div class="al al-crit"><div class="al-dot" style="background:var(--coral)"></div><div><div class="al-t">Carlos M. — Cohorte A · Riesgo 78%</div><div class="al-d">Mentor: Jorge R. · Intervención programada mañana</div></div></div>
+            <div class="al al-crit"><div class="al-dot" style="background:var(--coral)"></div><div><div class="al-t">Sofía L. — Cohorte B · Riesgo 81%</div><div class="al-d">Mentor: Ana M. · Pendiente contacto</div></div></div>
+            <div class="al al-crit"><div class="al-dot" style="background:var(--coral)"></div><div><div class="al-t">Pedro A. — Cohorte B · Riesgo 75%</div><div class="al-d">Mentor: Ana M. · En seguimiento psicológico</div></div></div>
+          </div>
+          <div class="card">
+            <div class="st">Predicción NEXO — Próximas 2 semanas</div>
+            <div class="card-sm mb14" style="margin-bottom:10px;background:rgba(240,96,96,.06);border:1px solid rgba(240,96,96,.2)">
+              <div style="font-weight:700;font-size:13px;color:var(--coral);margin-bottom:4px">⚠️ 3 estudiantes adicionales</div>
+              <div class="f12 t2">entrarán en riesgo alto si la tendencia continúa (Cohorte B)</div>
+            </div>
+            <div class="card-sm" style="background:rgba(45,212,160,.06);border:1px solid rgba(45,212,160,.2)">
+              <div style="font-weight:700;font-size:13px;color:var(--teal);margin-bottom:4px">✅ Intervención temprana puede salvar</div>
+              <div class="f12 t2">hasta el 68% de los casos en riesgo si se actúa esta semana</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COORD REPORTES -->
+      <div class="page" id="page-c-reportes">
+        <div class="st">Reportes del Programa</div>
+        <div class="g2" style="gap:14px">
+          <div>
+            <div class="card mb14" style="margin-bottom:12px">
+              <div style="display:flex;align-items:center;gap:14px">
+                <div style="font-size:28px">📊</div>
+                <div style="flex:1"><div style="font-weight:700;margin-bottom:4px">Reporte semanal — Semana 8</div><div class="f12 t3">Generado hoy · 67 estudiantes · 3 cohortes</div></div>
+                <button class="btn btn-primary" style="padding:8px 14px;font-size:12px">Descargar</button>
+              </div>
+            </div>
+            <div class="card mb14" style="margin-bottom:12px">
+              <div style="display:flex;align-items:center;gap:14px">
+                <div style="font-size:28px">📉</div>
+                <div style="flex:1"><div style="font-weight:700;margin-bottom:4px">Análisis de deserción mensual</div><div class="f12 t3">Junio 2025 · Tendencias y predicciones</div></div>
+                <button class="btn btn-ghost" style="padding:8px 14px;font-size:12px">Ver</button>
+              </div>
+            </div>
+            <div class="card">
+              <div style="display:flex;align-items:center;gap:14px">
+                <div style="font-size:28px">🏆</div>
+                <div style="flex:1"><div style="font-weight:700;margin-bottom:4px">Top estudiantes por cohorte</div><div class="f12 t3">Ranking de desempeño académico</div></div>
+                <button class="btn btn-ghost" style="padding:8px 14px;font-size:12px">Ver</button>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="st">Resumen ejecutivo</div>
+            <div class="mb14"><div class="ph"><span class="f13" style="font-weight:600">📊 Retención global</span><span style="color:var(--teal)">73%</span></div><div class="pt"><div class="pf" style="width:73%;background:var(--teal)"></div></div></div>
+            <div class="mb14"><div class="ph"><span class="f13" style="font-weight:600">✅ Módulos completados (prom.)</span><span style="color:var(--purple-l)">2.8 / 7</span></div><div class="pt"><div class="pf" style="width:40%;background:var(--purple)"></div></div></div>
+            <div class="mb14"><div class="ph"><span class="f13" style="font-weight:600">🎯 Objetivo retención</span><span style="color:var(--amber)">80%</span></div><div class="pt"><div class="pf" style="width:80%;background:var(--amber)"></div></div></div>
+            <div class="divider"></div>
+            <div class="f12 t2" style="line-height:1.7">La tendencia es positiva. NEXO proyecta alcanzar el 80% de retención para el cierre de la Cohorte A si se mantienen las intervenciones actuales.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- COORD MENTORES -->
+      <div class="page" id="page-c-mentores">
+        <div class="st">Equipo de Mentores <span class="pill">4 activos</span></div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div class="mod-item"><div class="mod-ico" style="background:linear-gradient(135deg,rgba(124,111,247,.3),rgba(45,212,160,.2));font-size:18px">👨‍🏫</div><div><div class="mod-n">Jorge Ramírez</div><div class="mod-d">Cohorte A · 12 estudiantes · 24 sesiones completadas</div></div><span class="mod-st" style="background:rgba(45,212,160,.15);color:var(--teal)">Activo ⭐4.7</span></div>
+          <div class="mod-item"><div class="mod-ico" style="background:linear-gradient(135deg,rgba(124,111,247,.3),rgba(45,212,160,.2));font-size:18px">👩‍🏫</div><div><div class="mod-n">Ana Mejía</div><div class="mod-d">Cohorte B · 13 estudiantes · 18 sesiones completadas</div></div><span class="mod-st" style="background:rgba(245,166,35,.15);color:var(--amber)">Activa ⭐4.3</span></div>
+          <div class="mod-item"><div class="mod-ico" style="background:linear-gradient(135deg,rgba(124,111,247,.3),rgba(45,212,160,.2));font-size:18px">👨‍🏫</div><div><div class="mod-n">Carlos Vélez</div><div class="mod-d">Cohorte C · 10 estudiantes · 6 sesiones completadas</div></div><span class="mod-st" style="background:rgba(45,212,160,.15);color:var(--teal)">Activo ⭐4.8</span></div>
+          <div class="mod-item"><div class="mod-ico" style="background:linear-gradient(135deg,rgba(124,111,247,.3),rgba(45,212,160,.2));font-size:18px">👩‍🏫</div><div><div class="mod-n">Mónica Salcedo</div><div class="mod-d">Soporte general · Intervenciones · 12 sesiones</div></div><span class="mod-st" style="background:rgba(74,158,255,.15);color:var(--blue)">Soporte ⭐4.5</span></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<!-- ══ SCREEN 6: APP ADMIN ══ -->
+<div class="screen" id="screen-app-admin">
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">N</div>
+      <div class="logo-text">Nexus<em>Acad</em></div>
+    </div>
+    <nav class="nav">
+      <div class="nav-sec">Administración</div>
+      <div class="nav-item active" onclick="goToA('a-dashboard',this)"><span class="ni">🏠</span>Dashboard</div>
+      <div class="nav-item" onclick="goToA('a-usuarios',this)"><span class="ni">👥</span>Gestión de Usuarios</div>
+      <div class="nav-item" onclick="goToA('a-crear',this)"><span class="ni">➕</span>Crear Cuenta</div>
+      <div class="nav-sec">Sistema</div>
+      <div class="nav-item" onclick="goToA('a-logs',this)"><span class="ni">📋</span>Registro del Sistema</div>
+    </nav>
+    <div class="side-profile">
+      <div class="side-card">
+        <div class="av" style="background:linear-gradient(135deg,#f06060,#c0392b)">AD</div>
+        <div>
+          <div style="font-size:13px;font-weight:700">Administrador</div>
+          <div style="font-size:11px;color:var(--text3)">Super Admin · Campuslands</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+  <main class="main">
+    <div class="topbar">
+      <div>
+        <div class="topbar-title" id="a-page-title">Panel de Administración</div>
+        <div style="font-size:12px;color:var(--text3)">Control total · NexusAcad · Campuslands</div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-primary" onclick="goToA('a-crear',null)">➕ Nueva cuenta</button>
+        <button class="btn btn-ghost" onclick="doLogout()" style="color:var(--coral)">⏻ Salir</button>
+      </div>
+    </div>
+    <div class="content">
+
+      <!-- ADMIN DASHBOARD -->
+      <div class="page active" id="page-a-dashboard">
+        <div style="margin-bottom:20px">
+          <div style="font-size:20px;font-weight:800;margin-bottom:4px">Panel de Administración 🛡️</div>
+          <div class="t3 f13">Gestiona coordinadores, mentores y el acceso a la plataforma.</div>
+        </div>
+        <div class="g4 mb14">
+          <div class="kpi"><div class="kpi-val" id="a-kpi-total" style="color:var(--purple-l)">—</div><div class="kpi-lbl">Usuarios totales</div></div>
+          <div class="kpi"><div class="kpi-val" id="a-kpi-est" style="color:var(--teal)">—</div><div class="kpi-lbl">Estudiantes</div></div>
+          <div class="kpi"><div class="kpi-val" id="a-kpi-men" style="color:var(--amber)">—</div><div class="kpi-lbl">Mentores</div></div>
+          <div class="kpi"><div class="kpi-val" id="a-kpi-coord" style="color:var(--blue)">—</div><div class="kpi-lbl">Coordinadores</div></div>
+        </div>
+        <div class="card">
+          <div class="st">Accesos rápidos</div>
+          <div class="g3" style="gap:12px;margin-top:4px">
+            <div class="card-sm" style="cursor:pointer;transition:all .15s;border:1px solid var(--border)" onclick="goToA('a-crear',null)" onmouseover="this.style.borderColor='rgba(124,111,247,.4)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="font-size:28px;margin-bottom:8px">👨‍🏫</div>
+              <div style="font-weight:700;font-size:13px;margin-bottom:4px">Crear Mentor</div>
+              <div class="t3 f12">Registra un nuevo trainer en el sistema</div>
+            </div>
+            <div class="card-sm" style="cursor:pointer;transition:all .15s;border:1px solid var(--border)" onclick="goToA('a-crear',null)" onmouseover="this.style.borderColor='rgba(74,158,255,.4)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="font-size:28px;margin-bottom:8px">🏛️</div>
+              <div style="font-weight:700;font-size:13px;margin-bottom:4px">Crear Coordinador</div>
+              <div class="t3 f12">Registra un nuevo coordinador académico</div>
+            </div>
+            <div class="card-sm" style="cursor:pointer;transition:all .15s;border:1px solid var(--border)" onclick="goToA('a-usuarios',null)" onmouseover="this.style.borderColor='rgba(45,212,160,.4)'" onmouseout="this.style.borderColor='var(--border)'">
+              <div style="font-size:28px;margin-bottom:8px">👥</div>
+              <div style="font-weight:700;font-size:13px;margin-bottom:4px">Ver todos los usuarios</div>
+              <div class="t3 f12">Consulta y gestiona cuentas existentes</div>
+            </div>
+          </div>
+        </div>
+        <div class="card mt14" style="margin-top:14px">
+          <div class="st">Últimos usuarios registrados</div>
+          <div id="a-recent-list"><div class="t3 f13" style="padding:10px 0">Cargando...</div></div>
+        </div>
+      </div>
+
+      <!-- ADMIN USUARIOS -->
+      <div class="page" id="page-a-usuarios">
+        <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px">
+          <div class="st" style="margin:0">Todos los usuarios</div>
+          <input id="a-search" type="text" placeholder="Buscar por nombre o correo..." oninput="renderUserTable()" style="margin-left:auto;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:9px 14px;color:var(--text);font-size:13px;outline:none;width:260px;font-family:inherit">
+          <select id="a-filter" onchange="renderUserTable()" style="background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:9px 12px;color:var(--text);font-size:13px;outline:none;font-family:inherit;cursor:pointer">
+            <option value="">Todos los roles</option>
+            <option value="estudiante">Estudiantes</option>
+            <option value="mentor">Mentores</option>
+            <option value="coordinador">Coordinadores</option>
+          </select>
+        </div>
+        <div class="card" style="padding:0;overflow:hidden">
+          <div id="a-user-table" style="overflow-x:auto"></div>
+        </div>
+      </div>
+
+      <!-- ADMIN CREAR -->
+      <div class="page" id="page-a-crear">
+        <div style="max-width:520px;margin:0 auto">
+          <div class="st">Crear nueva cuenta</div>
+          <div class="card">
+            <div class="auth-msg" id="a-crear-msg"></div>
+            <div class="field" id="fa-name">
+              <label>Nombre completo</label>
+              <input type="text" id="a-name" placeholder="NOMBRE COMPLETO" oninput="this.value=this.value.toUpperCase()">
+              <div class="field-err">El nombre es obligatorio</div>
+            </div>
+            <div class="field" id="fa-email">
+              <label>Correo Gmail</label>
+              <input type="email" id="a-email" placeholder="usuario@gmail.com" oninput="checkEmail(this)">
+              <div class="field-err">Debe ser una cuenta @gmail.com válida</div>
+            </div>
+            <div class="field" id="fa-role">
+              <label>Tipo de cuenta</label>
+              <select id="a-role" style="width:100%;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:11px 14px;color:var(--text);font-size:14px;outline:none;font-family:inherit;appearance:none;cursor:pointer;transition:border-color .2s" onfocus="this.style.borderColor='rgba(124,111,247,.5)'" onblur="this.style.borderColor=''">
+                <option value="mentor">👨‍🏫 Mentor / Trainer</option>
+                <option value="coordinador">🏛️ Coordinador</option>
+              </select>
+            </div>
+            <div class="field" id="fa-pwd">
+              <label>Contraseña temporal</label>
+              <div class="pwd-wrap">
+                <input type="password" id="a-pwd" placeholder="Mínimo 8 caracteres" maxlength="20" oninput="pwdStrength(this.value,'a')">
+                <button class="pwd-toggle" onclick="togglePwd('a-pwd',this)" type="button">👁</button>
+              </div>
+              <div class="pwd-bars"><div class="pwd-bar" id="apb1"></div><div class="pwd-bar" id="apb2"></div><div class="pwd-bar" id="apb3"></div><div class="pwd-bar" id="apb4"></div></div>
+              <div class="field-err">8–20 caracteres y al menos 1 letra mayúscula</div>
+            </div>
+            <button class="btn-auth" onclick="adminCreateUser()" style="margin-top:10px">Crear cuenta →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ADMIN LOGS -->
+      <div class="page" id="page-a-logs">
+        <div class="st">Registro de actividad del sistema</div>
+        <div class="card" style="padding:0;overflow:hidden">
+          <div id="a-logs-list" style="max-height:70vh;overflow-y:auto"></div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
