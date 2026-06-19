@@ -221,6 +221,8 @@ Proyecto desarrollado con fines académicos, de innovación y transformación di
 
 <div align="center">
 
+PRESENTACION: https://canva.link/dq2jxv4v5hpwmad
+
 ### 🚀 Impulsando el éxito académico mediante Inteligencia Artificial
 
 </div>
